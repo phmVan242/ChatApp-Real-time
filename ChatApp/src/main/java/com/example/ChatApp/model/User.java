@@ -66,11 +66,11 @@ public class User {
 
     @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<Friendship> sentFriendRequests = new ArrayList<>();
+    private List<Friendship> sentRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "addressee", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<Friendship> receivedFriendRequests = new ArrayList<>();
+    private List<Friendship> receivedRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

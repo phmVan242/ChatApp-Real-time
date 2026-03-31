@@ -62,9 +62,9 @@ public class RoomMember {
      * Gọi từ Service sau khi query COUNT từ DB,
      * không tính trực tiếp ở đây để tránh N+1.
      */
-//    public boolean hasUnread(Long latestMessageId) {
-//        if (lastReadMessage == null) return true;
-//        return latestMessageId != null && latestMessageId > lastReadMessage.getId();
-//    }
+    public boolean hasUnread(Long latestMessageId) {
+        if (lastReadMessage == null) return true;
+        return latestMessageId != null && latestMessageId > lastReadMessage.getId();
+    }
 
 }
