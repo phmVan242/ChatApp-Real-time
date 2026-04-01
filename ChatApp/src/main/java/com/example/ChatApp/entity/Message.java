@@ -1,6 +1,6 @@
-package com.example.ChatApp.model;
+package com.example.ChatApp.entity;
 
-import com.example.ChatApp.model.enums.MessageType;
+import com.example.ChatApp.entity.enums.MessageType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,9 +48,15 @@ public class Message {
     @Builder.Default
     private boolean isDeleted = false;
 
+    // Null nếu chưa từng sửa
+    @Column(name = "edited_at")
+    private LocalDateTime editedAt;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    // ── Business methods ──────────────────────────────────────
 
     public void softDelete() {
         this.isDeleted     = true;
@@ -58,4 +64,11 @@ public class Message {
         this.attachmentUrl = null;
     }
 
+    public void edit(String newContent) {
+        if (this.isDeleted) {
+            throw new IllegalStateException("Không thể sửa tin nhắn đã bị xóa");
+        }
+        this.content  = newContent;
+        this.editedAt = LocalDateTime.now();
+    }
 }

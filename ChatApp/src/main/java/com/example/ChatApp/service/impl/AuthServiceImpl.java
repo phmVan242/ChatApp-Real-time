@@ -2,16 +2,15 @@ package com.example.ChatApp.service.impl;
 
 import com.example.ChatApp.dto.RegisterRequest;
 import com.example.ChatApp.dto.UserResponse;
-import com.example.ChatApp.model.User;
-import com.example.ChatApp.model.enums.UserRole;
-import com.example.ChatApp.model.enums.UserStatus;
+import com.example.ChatApp.entity.User;
+import com.example.ChatApp.entity.enums.UserRole;
+import com.example.ChatApp.entity.enums.UserStatus;
 import com.example.ChatApp.repository.UserRepository;
 import com.example.ChatApp.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.management.relation.Role;
 import java.time.LocalDateTime;
 
 @Service

@@ -1,6 +1,6 @@
 package com.example.ChatApp.repository;
 
-import com.example.ChatApp.model.User;
+import com.example.ChatApp.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.management.relation.Role;

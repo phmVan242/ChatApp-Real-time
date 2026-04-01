@@ -1,4 +1,4 @@
-package com.example.ChatApp.model.enums;
+package com.example.ChatApp.entity.enums;
 
 public enum MemberRole {
     OWNER,   // tạo phòng, full quyền, không thể bị kick

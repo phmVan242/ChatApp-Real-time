@@ -1,7 +1,7 @@
 package com.example.ChatApp.dto;
 
-import com.example.ChatApp.model.enums.UserRole;
-import com.example.ChatApp.model.enums.UserStatus;
+import com.example.ChatApp.entity.enums.UserRole;
+import com.example.ChatApp.entity.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

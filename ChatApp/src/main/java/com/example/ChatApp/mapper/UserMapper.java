@@ -1,11 +1,16 @@
 package com.example.ChatApp.mapper;
 
 import com.example.ChatApp.dto.UserResponse;
-import com.example.ChatApp.model.User;
+import com.example.ChatApp.entity.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMapper {
 
-    public static UserResponse mapToUserDTO(User user) {
+    /**
+     * Entity → Response DTO
+     */
+    public UserResponse toResponse(User user) {
         if (user == null) return null;
 
         UserResponse dto = new UserResponse();
@@ -22,7 +27,10 @@ public class UserMapper {
         return dto;
     }
 
-    public static User mapToUser(UserResponse dto) {
+    /**
+     * Response DTO → Entity
+     */
+    public User toEntity(UserResponse dto) {
         if (dto == null) return null;
 
         User user = new User();
