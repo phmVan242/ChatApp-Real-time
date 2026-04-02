@@ -1,6 +1,6 @@
-package com.example.ChatApp.model;
+package com.example.ChatApp.entity;
 
-import com.example.ChatApp.model.enums.MemberRole;
+import com.example.ChatApp.entity.enums.MemberRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

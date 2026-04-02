@@ -1,4 +1,4 @@
-package com.example.ChatApp.model.enums;
+package com.example.ChatApp.entity.enums;
 
 public enum RoomType {
     PRIVATE,  // chat 1-1, tạo tự động khi kết bạn
