@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../../hooks/useAuth';
 import ApiService from '../../api/ApiService';
@@ -224,9 +224,9 @@ export default function Login() {
 
             <p className="mt-8 text-center">
               Don't have an account?{' '}
-              <span className="cursor-pointer text-sm text-blue-600 hover:underline">
-                Join free today
-              </span>
+              <Link to="/register" className="cursor-pointer text-sm text-blue-600 hover:underline">
+                Register here
+              </Link>
             </p>
           </div>
         </div>
