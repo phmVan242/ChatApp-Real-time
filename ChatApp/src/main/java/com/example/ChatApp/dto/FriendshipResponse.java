@@ -1,6 +1,6 @@
 package com.example.ChatApp.dto;
 
-import com.example.ChatApp.entity.enums.RoomType;
+import com.example.ChatApp.entity.enums.FriendshipStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,13 +11,11 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomResponse {
+public class FriendshipResponse {
     private Long id;
-    private String name;
-    private String description;
-    private String avatarUrl;
-    private RoomType type;
-    private UserBasicInfo createdBy;
+    private UserBasicInfo requester;
+    private UserBasicInfo addressee;
+    private Long roomId;
+    private FriendshipStatus status;
     private LocalDateTime createdAt;
-//    private long memberCount;
 }

@@ -58,33 +58,14 @@ class CreateRoomRequest {
 // FRIENDSHIP
 // ════════════════════════════════════════════════════════════
 
-// POST /api/friends/request
-class FriendRequest {
-    @NotNull
-    public Long addresseeId;
-}
 
 // Response kết bạn
-class FriendResponse {
-    public Long         id;
-    public UserResponse friend;     // người kia (không phải mình)
-    public String       status;     // "PENDING" / "ACCEPTED" / "BLOCKED"
-    public Long         roomId;     // room chat 1-1 (null nếu chưa ACCEPTED)
-    public LocalDateTime createdAt;
-}
 
 // ════════════════════════════════════════════════════════════
 // NOTIFICATION
 // ════════════════════════════════════════════════════════════
 
-class NotificationResponse {
-    public Long          id;
-    public UserResponse  actor;      // người thực hiện
-    public String        type;
-    public String        message;
-    public boolean       isRead;
-    public LocalDateTime createdAt;
-}
+
 
 // ════════════════════════════════════════════════════════════
 // WEBSOCKET — Presence (online/offline)

@@ -1,7 +1,10 @@
 package com.example.ChatApp.controller;
 
 import com.example.ChatApp.dto.RoomResponse;
+import com.example.ChatApp.dto.UpdateRoomRequest;
+import com.example.ChatApp.entity.Room;
 import com.example.ChatApp.entity.enums.MemberRole;
+import com.example.ChatApp.mapper.RoomMapper;
 import com.example.ChatApp.service.RoomService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class RoomController {
 
     private final RoomService roomService;
+    private final RoomMapper roomMapper;
 
     /**
      * Tạo phòng private (chat 1-1) giữa current user và user khác.
@@ -30,8 +34,8 @@ public class RoomController {
             @RequestParam Long otherUserId,
             @AuthenticationPrincipal UserDetails currentUser) {
         Long currentUserId = extractUserId(currentUser);
-        RoomResponse room = roomService.createPrivateRoom(currentUserId, otherUserId);
-        return ResponseEntity.ok(room);
+        Room room = roomService.createPrivateRoom(currentUserId, otherUserId);
+        return ResponseEntity.ok(roomMapper.toResponse(room));
     }
 
     /**
@@ -141,15 +145,15 @@ public class RoomController {
      * Tìm kiếm phòng công khai (GROUP) theo tên.
      * GET /api/rooms/search?keyword=java&page=0&size=10
      */
-    @GetMapping("/search")
-    public ResponseEntity<Page<RoomResponse>> searchPublicRooms(
-            @RequestParam @NotBlank String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<RoomResponse> rooms = roomService.searchPublicRooms(keyword, pageable);
-        return ResponseEntity.ok(rooms);
-    }
+//    @GetMapping("/search")
+//    public ResponseEntity<Page<RoomResponse>> searchPublicRooms(
+//            @RequestParam @NotBlank String keyword,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "20") int size) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<RoomResponse> rooms = roomService.searchPublicRooms(keyword, pageable);
+//        return ResponseEntity.ok(rooms);
+//    }
 
     // Helper method lấy userId từ UserDetails
     // Bạn cần custom UserDetails để chứa id, hoặc tạm thời dùng username để tìm user
@@ -159,19 +163,4 @@ public class RoomController {
         // Ví dụ: ((CustomUserDetails) userDetails).getId();
         return 1L; // TODO: thay bằng logic thật
     }
-}
-
-// Request DTO cho cập nhật phòng
-class UpdateRoomRequest {
-    private String name;
-    private String description;
-    private String avatarUrl;
-
-    // Getters & setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public String getAvatarUrl() { return avatarUrl; }
-    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 }

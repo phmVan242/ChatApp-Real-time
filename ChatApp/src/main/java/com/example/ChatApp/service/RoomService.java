@@ -1,47 +1,37 @@
 package com.example.ChatApp.service;
 
 import com.example.ChatApp.dto.RoomResponse;
-//import com.example.ChatApp.dto.CreateRoomRequest;
-//import com.example.ChatApp.dto.AddMemberRequest;
+import com.example.ChatApp.entity.Room;
 import com.example.ChatApp.entity.enums.MemberRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface RoomService {
 
-    // Tạo phòng mới
-//    RoomResponse createRoom(CreateRoomRequest request, Long creatorId);
+    // Tạo room PRIVATE (1-1) dùng khi kết bạn
+    Room createPrivateRoom(Long currentUserId, Long otherUserId);
 
-    // Tạo phòng private (chat 1-1)
-    RoomResponse createPrivateRoom(Long user1Id, Long user2Id);
-
-    // Lấy phòng theo ID
+    // Lấy thông tin room theo ID
     RoomResponse getRoomById(Long roomId);
 
-    // Lấy tất cả phòng của user
+    // Lấy danh sách tất cả room của user (phân trang)
     Page<RoomResponse> getUserRooms(Long userId, Pageable pageable);
 
-    // Cập nhật thông tin phòng (tên, avatar, mô tả)
-    RoomResponse updateRoomInfo(Long roomId, String name, String description, String avatarUrl, Long userId);
+    // Cập nhật thông tin room (tên, mô tả, avatar) - chỉ cho GROUP room
+    RoomResponse updateRoomInfo(Long roomId, String name, String description, String avatarUrl, Long currentUserId);
 
-    // Thêm thành viên vào phòng
-//    void addMembers(Long roomId, List<AddMemberRequest> members, Long requesterId);
+    // Xóa thành viên khỏi room (chỉ admin)
+    void removeMember(Long roomId, Long memberId, Long currentUserId);
 
-    // Xóa thành viên khỏi phòng
-    void removeMember(Long roomId, Long memberId, Long requesterId);
+    // Thay đổi role của thành viên (MEMBER <-> ADMIN)
+    void changeMemberRole(Long roomId, Long memberId, MemberRole role, Long currentUserId);
 
-    // Thay đổi role thành viên (MEMBER -> ADMIN)
-    void changeMemberRole(Long roomId, Long memberId, MemberRole newRole, Long requesterId);
+    // Rời khỏi room (current user tự rời)
+    void leaveRoom(Long roomId, Long currentUserId);
 
-    // Rời khỏi phòng
-    void leaveRoom(Long roomId, Long userId);
+    // Xóa room (chỉ creator)
+    void deleteRoom(Long roomId, Long currentUserId);
 
-    // Xóa phòng (chỉ admin/creator)
-    void deleteRoom(Long roomId, Long userId);
-
-    // Tìm kiếm phòng công khai
-    Page<RoomResponse> searchPublicRooms(String keyword, Pageable pageable);
-
-    // Lấy danh sách thành viên trong phòng
-//    Page<RoomResponse.MemberInfo> getRoomMembers(Long roomId, Pageable pageable);
+    // Tìm kiếm room công khai (GROUP) theo tên (phân trang)
+//    Page<RoomResponse> searchPublicRooms(String keyword, Pageable pageable);
 }
