@@ -27,12 +27,12 @@ public class UserController {
     }
 
     // Tạo User mới
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserResponse userDto) {
-        UserResponse savedUser = userService.createUser(userDto);
-
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
-    }
+//    @PostMapping
+//    public ResponseEntity<UserResponse> createUser(@RequestBody UserResponse userDto) {
+//        UserResponse savedUser = userService.createUser(userDto);
+//
+//        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+//    }
 
     // Cập nhật User
     @PutMapping("/{id}")
@@ -47,4 +47,8 @@ public class UserController {
         return ResponseEntity.ok(savedUser);
     }
 
+//    @DeleteMapping
+//    public void deleteUserById(@PathVariable long id){
+//        userService.d
+//    }
 }
