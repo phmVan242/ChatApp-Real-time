@@ -43,19 +43,24 @@ export interface UserResponse {
   createdAt: string;
 }
 
+
+
+export interface UserBasicInfo {
+  id: number;
+  username: string;
+  displayName: string;
+  avatarUrl?: string | null;
+}
+
 export interface RoomResponse {
   id: number;
   name?: string | null;
   description?: string | null;
   avatarUrl?: string | null;
   type: "PRIVATE" | "GROUP";
-  createdBy: {
-    id: number;
-    username: string;
-    displayName: string;
-    avatarUrl?: string | null;
-  };
+  createdBy: UserBasicInfo;
   createdAt: string;
+  members: UserBasicInfo[];   // ← thêm
 }
 export interface PageResponse<T> {
   content: T[];

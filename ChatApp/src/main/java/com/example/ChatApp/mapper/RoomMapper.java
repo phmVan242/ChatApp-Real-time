@@ -4,9 +4,13 @@ import com.example.ChatApp.dto.room.RoomRequest;
 import com.example.ChatApp.dto.room.RoomResponse;
 import com.example.ChatApp.dto.user.UserBasicInfo;
 import com.example.ChatApp.entity.Room;
+import com.example.ChatApp.entity.RoomMember;
 import com.example.ChatApp.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -27,6 +31,20 @@ public class RoomMapper {
                     .build();
         }
 
+        // Map members từ RoomMember entities
+        List<UserBasicInfo> memberInfos = null;
+        if (room.getMembers() != null) {
+            memberInfos = room.getMembers().stream()
+                    .map(RoomMember::getUser)
+                    .map(user -> UserBasicInfo.builder()
+                            .id(user.getId())
+                            .username(user.getUsername())
+                            .displayName(user.getDisplayName())
+                            .avatarUrl(user.getAvatarUrl())
+                            .build())
+                    .collect(Collectors.toList());
+        }
+
         return RoomResponse.builder()
                 .id(room.getId())
                 .name(room.getName())
@@ -35,7 +53,7 @@ public class RoomMapper {
                 .type(room.getType())
                 .createdBy(createdByInfo)
                 .createdAt(room.getCreatedAt())
-//                .memberCount(room.getMembers() != null ? room.getMembers().size() : 0)
+                .members(memberInfos)
                 .build();
     }
 
