@@ -50,19 +50,18 @@ public class AuthController {
             if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
                 throw new RuntimeException("Invalid username or password");
             }
-            String token = JwtUtil.generateToken(loginRequest.getUsername(), user.getRole().toString());
+            String token = JwtUtil.generateToken(loginRequest.getUsername(), user.getRole().toString(), user.getId());
 
             return ResponseEntity.ok(
                     Map.of(
                             "token", token,
                             "username", user.getUsername(),
-                            "role", user.getRole()
+                            "role", user.getRole(),
+                            "userId", user.getId()
                     )
             );
-        } catch (EntityExistsException entityExistsException){
-            return new ResponseEntity<>("User already exist", HttpStatus.NOT_ACCEPTABLE);
         } catch (Exception e){
-            return new ResponseEntity<>("User are not created, come again later", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Login failed", HttpStatus.BAD_REQUEST);
         }
     }
 

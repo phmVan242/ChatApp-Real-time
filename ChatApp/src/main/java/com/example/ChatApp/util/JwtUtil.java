@@ -15,17 +15,17 @@ public class JwtUtil {
 
     private static final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-    // Sinh token
-    public static String generateToken(String username, String role) {
+    // Sinh token (thêm userId)
+    public static String generateToken(String username, String role, Long userId) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("role", role)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
-
 
     // Lấy username từ token
     public static String extractUsername(String token) {
@@ -35,6 +35,16 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    // Lấy userId từ token
+    public static Long extractUserId(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId", Long.class);
     }
 
     // Kiểm tra token hợp lệ
@@ -55,5 +65,4 @@ public class JwtUtil {
                 .getBody()
                 .get("role", String.class);
     }
-
 }

@@ -142,12 +142,12 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    // Helper method lấy userId từ UserDetails
     private Long extractUserId(UserDetails userDetails) {
-//        if (userDetails instanceof CustomUserDetails) {
-//            return ((CustomUserDetails) userDetails).getId();
-//        }
-//        throw new RuntimeException("Invalid user details");
-        return 9L;
+        if (userDetails instanceof CustomUserDetails) {
+            return ((CustomUserDetails) userDetails).getId();
+        }
+        // Log để biết class thực tế
+        System.out.println("UserDetails class: " + userDetails.getClass().getName());
+        throw new RuntimeException("UserDetails không phải CustomUserDetails: " + userDetails.getClass());
     }
 }

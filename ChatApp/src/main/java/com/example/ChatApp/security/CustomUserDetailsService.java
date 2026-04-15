@@ -18,6 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        return new CustomUserDetails(user);
+        // Sửa dòng này: truyền id, username, role
+        return new CustomUserDetails(user.getId(), user.getUsername(), user.getRole().name());
     }
 }
