@@ -1,8 +1,8 @@
 package com.example.ChatApp.service;
 
-import com.example.ChatApp.dto.FriendRequest;
-import com.example.ChatApp.dto.FriendRequestResponse;
-import com.example.ChatApp.dto.FriendshipResponse;
+import com.example.ChatApp.dto.user.FriendRequest;
+import com.example.ChatApp.dto.user.FriendRequestResponse;
+import com.example.ChatApp.dto.user.FriendshipResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

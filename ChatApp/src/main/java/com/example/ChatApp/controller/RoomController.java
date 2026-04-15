@@ -1,12 +1,13 @@
 package com.example.ChatApp.controller;
 
-import com.example.ChatApp.dto.RoomResponse;
-import com.example.ChatApp.dto.UpdateRoomRequest;
+import com.example.ChatApp.dto.room.RoomResponse;
+import com.example.ChatApp.dto.room.UpdateRoomRequest;
 import com.example.ChatApp.entity.Room;
 import com.example.ChatApp.entity.enums.MemberRole;
 import com.example.ChatApp.mapper.RoomMapper;
+import com.example.ChatApp.repository.UserRepository;
+import com.example.ChatApp.security.CustomUserDetails;
 import com.example.ChatApp.service.RoomService;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -141,26 +142,12 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Tìm kiếm phòng công khai (GROUP) theo tên.
-     * GET /api/rooms/search?keyword=java&page=0&size=10
-     */
-//    @GetMapping("/search")
-//    public ResponseEntity<Page<RoomResponse>> searchPublicRooms(
-//            @RequestParam @NotBlank String keyword,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "20") int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<RoomResponse> rooms = roomService.searchPublicRooms(keyword, pageable);
-//        return ResponseEntity.ok(rooms);
-//    }
-
     // Helper method lấy userId từ UserDetails
-    // Bạn cần custom UserDetails để chứa id, hoặc tạm thời dùng username để tìm user
     private Long extractUserId(UserDetails userDetails) {
-        // Giả định username là email hoặc tên đăng nhập, bạn cần query UserRepository để lấy id
-        // Ở đây demo trả về 1L. Thực tế nên có CustomUserDetails chứa id.
-        // Ví dụ: ((CustomUserDetails) userDetails).getId();
-        return 1L; // TODO: thay bằng logic thật
+//        if (userDetails instanceof CustomUserDetails) {
+//            return ((CustomUserDetails) userDetails).getId();
+//        }
+//        throw new RuntimeException("Invalid user details");
+        return 9L;
     }
 }

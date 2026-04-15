@@ -1,6 +1,6 @@
 package com.example.ChatApp.controller;
 
-import com.example.ChatApp.dto.NotificationResponse;
+import com.example.ChatApp.dto.notification.NotificationResponse;
 import com.example.ChatApp.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

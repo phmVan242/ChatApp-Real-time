@@ -1,8 +1,8 @@
 package com.example.ChatApp.controller;
 
-import com.example.ChatApp.dto.FriendRequest;
-import com.example.ChatApp.dto.FriendRequestResponse;
-import com.example.ChatApp.dto.FriendshipResponse;
+import com.example.ChatApp.dto.user.FriendRequest;
+import com.example.ChatApp.dto.user.FriendRequestResponse;
+import com.example.ChatApp.dto.user.FriendshipResponse;
 import com.example.ChatApp.service.FriendshipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

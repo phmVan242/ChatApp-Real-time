@@ -1,6 +1,9 @@
 package com.example.ChatApp.service;
 
-import com.example.ChatApp.dto.*;
+import com.example.ChatApp.dto.message.EditMessageRequest;
+import com.example.ChatApp.dto.message.MessagePageResponse;
+import com.example.ChatApp.dto.message.MessageResponse;
+import com.example.ChatApp.dto.message.SendMessageRequest;
 
 public interface MessageService {
 

@@ -1,6 +1,6 @@
 package com.example.ChatApp.websocket;
 
-import com.example.ChatApp.dto.NotificationResponse;
+import com.example.ChatApp.dto.notification.NotificationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;

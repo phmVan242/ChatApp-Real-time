@@ -1,7 +1,7 @@
 package com.example.ChatApp.service.impl;
 
-import com.example.ChatApp.dto.CreateNotificationRequest;
-import com.example.ChatApp.dto.NotificationResponse;
+import com.example.ChatApp.dto.notification.CreateNotificationRequest;
+import com.example.ChatApp.dto.notification.NotificationResponse;
 import com.example.ChatApp.entity.Notification;
 import com.example.ChatApp.entity.User;
 import com.example.ChatApp.exception.ResourceNotFoundException;

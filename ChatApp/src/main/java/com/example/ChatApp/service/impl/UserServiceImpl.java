@@ -1,12 +1,13 @@
 package com.example.ChatApp.service.impl;
 
-import com.example.ChatApp.dto.UserResponse;
+import com.example.ChatApp.dto.user.UserResponse;
 import com.example.ChatApp.exception.ResourceNotFoundException;
 import com.example.ChatApp.mapper.UserMapper;
 import com.example.ChatApp.entity.User;
 import com.example.ChatApp.repository.UserRepository;
 import com.example.ChatApp.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -58,6 +59,17 @@ public class UserServiceImpl implements UserService {
         user.setStatus(dto.getStatus());
 
         user = userRepository.save(user);
+        return userMapper.toResponse(user);
+    }
+
+    @Override
+    public UserResponse getMyInfor() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findUserByDisplayName(name).orElseThrow(
+                ()-> new ResourceNotFoundException("...")
+        );
         return userMapper.toResponse(user);
     }
 }

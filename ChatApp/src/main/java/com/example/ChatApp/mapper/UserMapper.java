@@ -1,6 +1,6 @@
 package com.example.ChatApp.mapper;
 
-import com.example.ChatApp.dto.UserResponse;
+import com.example.ChatApp.dto.user.UserResponse;
 import com.example.ChatApp.entity.User;
 import org.springframework.stereotype.Component;
 

@@ -4,12 +4,10 @@ package com.example.ChatApp.dto;
 // AUTH
 // ════════════════════════════════════════════════════════════
 
-import jakarta.validation.constraints.Email;
+import com.example.ChatApp.dto.user.UserResponse;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 

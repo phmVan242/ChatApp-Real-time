@@ -1,43 +1,93 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
-interface LoginResponse {
+// Cấu hình axios client với interceptor tự động gắn token
+const axiosClient = axios.create({
+  baseURL: "http://localhost:8080",
+});
+
+axiosClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  config.headers["Content-Type"] = "application/json";
+  return config;
+});
+
+// ========== Các interface dữ liệu ==========
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
   token: string;
 }
 
-interface RegisterData {
+export interface RegisterRequest {
+  displayName?: string;
   username: string;
   email: string;
   password: string;
-  displayName?: string; // tuỳ chọn
 }
 
+export interface UserResponse {
+  id: number;
+  username: string;
+  email: string;
+  displayName: string;
+  avatarUrl?: string;
+  status: string;
+  role: string;
+  lastSeen?: string;
+  createdAt: string;
+}
+
+export interface RoomResponse {
+  id: number;
+  name?: string | null;
+  description?: string | null;
+  avatarUrl?: string | null;
+  type: "PRIVATE" | "GROUP";
+  createdBy: {
+    id: number;
+    username: string;
+    displayName: string;
+    avatarUrl?: string | null;
+  };
+  createdAt: string;
+}
+export interface PageResponse<T> {
+  content: T[];
+  totalPages?: number;
+  totalElements?: number;
+  // thêm các trường phân trang khác nếu cần
+}
+
+// ========== API Service ==========
 export default class ApiService {
-  static BASE_URL: string = "http://localhost:8080/api";
+  static BASE_URL = "http://localhost:8080";
 
-  static getHeader(): { headers: { Authorization: string; "Content-Type": string } } {
-    const token = localStorage.getItem("token");
-    return {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    };
+  // Login – trả về toàn bộ response (để lấy token)
+  static async login(data: LoginRequest): Promise<LoginResponse> {
+    const response = await axiosClient.post<LoginResponse>("/api/auth/login", data);
+    return response.data;
   }
 
-  /* ================= AUTH ================= */
+  // Register – gửi object { displayName, username, email, password }
+  static async register(data: RegisterRequest): Promise<void> {
+    await axiosClient.post("/api/auth/register", data);
+  }
 
-  // Login - trả về toàn bộ response (có .data)
-  static async login(username: string, password: string): Promise<AxiosResponse<LoginResponse>> {
-    const response = await axios.post<LoginResponse>(`${this.BASE_URL}/auth/login`, {
-      username,
-      password,
+  // Lấy thông tin user hiện tại (token đã được gắn tự động)
+  static async getMyInfo(): Promise<UserResponse> {
+    const response = await axiosClient.get<UserResponse>("/api/users/my-infor");
+    return response.data;
+  }
+    static async getRooms(page = 0, size = 20): Promise<PageResponse<RoomResponse>> {
+    const response = await axiosClient.get<PageResponse<RoomResponse>>("/api/rooms", {
+      params: { page, size },
     });
-    return response;
-  }
-
-  // Register - trả về toàn bộ response
-  static async register(userData: RegisterData): Promise<AxiosResponse<any>> {
-    const response = await axios.post(`${this.BASE_URL}/auth/register`, userData);
-    return response;
+    return response.data;
   }
 }

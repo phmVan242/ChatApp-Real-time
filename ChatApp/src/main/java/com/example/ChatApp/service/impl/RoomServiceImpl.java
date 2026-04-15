@@ -1,12 +1,11 @@
 package com.example.ChatApp.service.impl;
 
-import com.example.ChatApp.dto.RoomResponse;
+import com.example.ChatApp.dto.room.RoomResponse;
 import com.example.ChatApp.entity.Room;
 import com.example.ChatApp.entity.RoomMember;
 import com.example.ChatApp.entity.User;
 import com.example.ChatApp.entity.enums.MemberRole;
 import com.example.ChatApp.entity.enums.RoomType;
-import com.example.ChatApp.exception.ResourceNotFoundException;
 import com.example.ChatApp.exception.ResourceNotFoundException;
 import com.example.ChatApp.mapper.RoomMapper;
 import com.example.ChatApp.mapper.RoomMemberMapper;
@@ -54,6 +53,7 @@ public class RoomServiceImpl implements RoomService {
         // Kiểm tra đã tồn tại room PRIVATE giữa hai người chưa
         Optional<Room> existingRoom = roomRepository.findPrivateRoomBetweenUsers(currentUserId, otherUserId);
         if (existingRoom.isPresent()) {
+            System.out.println("!!!");
             return existingRoom.get();
         }
 

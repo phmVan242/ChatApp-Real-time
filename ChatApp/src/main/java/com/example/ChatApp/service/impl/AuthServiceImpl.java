@@ -1,7 +1,7 @@
 package com.example.ChatApp.service.impl;
 
-import com.example.ChatApp.dto.RegisterRequest;
-import com.example.ChatApp.dto.UserResponse;
+import com.example.ChatApp.dto.user.RegisterRequest;
+import com.example.ChatApp.dto.user.UserResponse;
 import com.example.ChatApp.entity.User;
 import com.example.ChatApp.entity.enums.UserRole;
 import com.example.ChatApp.entity.enums.UserStatus;

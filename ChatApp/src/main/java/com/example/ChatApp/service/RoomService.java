@@ -1,6 +1,6 @@
 package com.example.ChatApp.service;
 
-import com.example.ChatApp.dto.RoomResponse;
+import com.example.ChatApp.dto.room.RoomResponse;
 import com.example.ChatApp.entity.Room;
 import com.example.ChatApp.entity.enums.MemberRole;
 import org.springframework.data.domain.Page;

@@ -1,8 +1,8 @@
 package com.example.ChatApp.controller;
 
-import com.example.ChatApp.dto.LoginRequest;
-import com.example.ChatApp.dto.RegisterRequest;
-import com.example.ChatApp.dto.UserResponse;
+import com.example.ChatApp.dto.user.LoginRequest;
+import com.example.ChatApp.dto.user.RegisterRequest;
+import com.example.ChatApp.dto.user.UserResponse;
 import com.example.ChatApp.entity.User;
 import com.example.ChatApp.repository.UserRepository;
 import com.example.ChatApp.service.AuthService;

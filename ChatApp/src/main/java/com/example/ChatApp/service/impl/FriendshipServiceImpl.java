@@ -1,8 +1,8 @@
 package com.example.ChatApp.service.impl;
 
-import com.example.ChatApp.dto.FriendRequest;
-import com.example.ChatApp.dto.FriendRequestResponse;
-import com.example.ChatApp.dto.FriendshipResponse;
+import com.example.ChatApp.dto.user.FriendRequest;
+import com.example.ChatApp.dto.user.FriendRequestResponse;
+import com.example.ChatApp.dto.user.FriendshipResponse;
 import com.example.ChatApp.entity.Friendship;
 import com.example.ChatApp.entity.Room;
 import com.example.ChatApp.entity.User;

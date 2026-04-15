@@ -1,6 +1,6 @@
 package com.example.ChatApp.service;
 
-import com.example.ChatApp.dto.UserResponse;
+import com.example.ChatApp.dto.user.UserResponse;
 
 import java.util.List;
 
@@ -13,6 +13,8 @@ public interface UserService {
     UserResponse createUser(UserResponse dto);
 
     UserResponse updateUser(Long id, UserResponse dto);
+
+    UserResponse getMyInfor();
 
 
 }

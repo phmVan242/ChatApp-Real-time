@@ -1,6 +1,6 @@
 package com.example.ChatApp.mapper;
 
-import com.example.ChatApp.dto.MessageResponse;
+import com.example.ChatApp.dto.message.MessageResponse;
 import com.example.ChatApp.entity.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

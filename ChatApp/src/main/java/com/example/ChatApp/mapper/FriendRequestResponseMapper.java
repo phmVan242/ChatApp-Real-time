@@ -1,7 +1,7 @@
 package com.example.ChatApp.mapper;
 
-import com.example.ChatApp.dto.FriendRequestResponse;
-import com.example.ChatApp.dto.UserBasicInfo;
+import com.example.ChatApp.dto.user.FriendRequestResponse;
+import com.example.ChatApp.dto.user.UserBasicInfo;
 import com.example.ChatApp.entity.Friendship;
 import org.springframework.stereotype.Component;
 

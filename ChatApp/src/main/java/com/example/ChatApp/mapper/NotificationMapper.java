@@ -1,8 +1,8 @@
 package com.example.ChatApp.mapper;
 
-import com.example.ChatApp.dto.CreateNotificationRequest;
-import com.example.ChatApp.dto.NotificationResponse;
-import com.example.ChatApp.dto.UserBasicInfo;
+import com.example.ChatApp.dto.notification.CreateNotificationRequest;
+import com.example.ChatApp.dto.notification.NotificationResponse;
+import com.example.ChatApp.dto.user.UserBasicInfo;
 import com.example.ChatApp.entity.Notification;
 import com.example.ChatApp.entity.User;
 import lombok.RequiredArgsConstructor;

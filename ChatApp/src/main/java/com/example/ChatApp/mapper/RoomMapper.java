@@ -1,8 +1,8 @@
 package com.example.ChatApp.mapper;
 
-import com.example.ChatApp.dto.RoomRequest;
-import com.example.ChatApp.dto.RoomResponse;
-import com.example.ChatApp.dto.UserBasicInfo;
+import com.example.ChatApp.dto.room.RoomRequest;
+import com.example.ChatApp.dto.room.RoomResponse;
+import com.example.ChatApp.dto.user.UserBasicInfo;
 import com.example.ChatApp.entity.Room;
 import com.example.ChatApp.entity.User;
 import lombok.RequiredArgsConstructor;
