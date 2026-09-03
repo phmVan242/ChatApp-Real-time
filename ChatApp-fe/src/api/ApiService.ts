@@ -13,6 +13,7 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 
+// ========== Interfaces ==========
 export interface LoginRequest {
   username: string;
   password: string;
@@ -59,23 +60,17 @@ export interface RoomResponse {
   members: UserBasicInfo[];
 }
 
-export interface PageResponse<T> {
-  content: T[];
-  totalPages?: number;
-  totalElements?: number;
-}
-
 export interface MessageResponse {
   id: number;
+  roomId: number;
+  sender: UserResponse;
   content: string;
   type: string;
-  senderId: number;
-  senderName: string;
-  senderAvatar?: string;
-  createdAt: string;
+  attachmentUrl?: string | null;
   isDeleted: boolean;
-  replyToId?: number;
-  attachmentUrl?: string;
+  replyToId?: number | null;
+  replyToContent?: string | null;
+  createdAt: string;
 }
 
 export interface MessagePageResponse {
@@ -83,17 +78,19 @@ export interface MessagePageResponse {
   currentPage: number;
   totalPages: number;
   totalElements: number;
+  hasNext: boolean;
 }
 
-export interface SendMessageRequest {
-  content: string;
-  type?: string;
+export interface PageResponse<T> {
+  content: T[];
+  totalPages?: number;
+  totalElements?: number;
 }
 
+// ========== API Service ==========
 export default class ApiService {
   static BASE_URL = "http://localhost:8080";
 
-  // Auth
   static async login(data: LoginRequest): Promise<LoginResponse> {
     const response = await axiosClient.post<LoginResponse>("/api/auth/login", data);
     return response.data;
@@ -108,26 +105,28 @@ export default class ApiService {
     return response.data;
   }
 
-  // Users
+  static async getAllUsers(): Promise<UserResponse[]> {
+    const response = await axiosClient.get<UserResponse[]>("/api/users");
+    return response.data;
+  }
+
   static async getUserById(id: number): Promise<UserResponse> {
     const response = await axiosClient.get<UserResponse>(`/api/users/${id}`);
     return response.data;
   }
 
-  // Rooms
-  static async getRooms(page = 0, size = 20): Promise<PageResponse<RoomResponse>> {
-    const response = await axiosClient.get<PageResponse<RoomResponse>>("/api/rooms", {
-      params: { page, size },
+  static async getRooms(page = 0, size = 20): Promise<Page<RoomResponse>> {
+    const response = await axiosClient.get<Page<RoomResponse>>("/api/rooms", {
+      params: { page, size, sort: "createdAt", direction: "desc" },
     });
     return response.data;
   }
 
-  static async getRoomById(roomId: number): Promise<RoomResponse> {
-    const response = await axiosClient.get<RoomResponse>(`/api/rooms/${roomId}`);
+  static async createPrivateRoom(otherUserId: number): Promise<RoomResponse> {
+    const response = await axiosClient.post<RoomResponse>(`/api/rooms/private?otherUserId=${otherUserId}`);
     return response.data;
   }
 
-  // Messages
   static async getMessages(roomId: number, page = 0, size = 30): Promise<MessagePageResponse> {
     const response = await axiosClient.get<MessagePageResponse>(`/api/rooms/${roomId}/messages`, {
       params: { page, size },
@@ -148,12 +147,19 @@ export default class ApiService {
     await axiosClient.put(`/api/rooms/${roomId}/messages/${messageId}/read`);
   }
 
-  // Friendships (nếu cần sau)
-  static async sendFriendRequest(userId: number): Promise<void> {
-    await axiosClient.post("/api/friends/requests", { addresseeId: userId });
+  static async updateProfile(userId: number, data: Partial<UserResponse>): Promise<UserResponse> {
+    const response = await axiosClient.put<UserResponse>(`/api/users/${userId}`, data);
+    return response.data;
   }
+}
 
-  static async acceptFriendRequest(requestId: number): Promise<void> {
-    await axiosClient.put(`/api/friends/requests/${requestId}/accept`);
-  }
+interface Page<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+  size: number;
+  last: boolean;
+  first: boolean;
+  empty: boolean;
 }

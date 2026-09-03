@@ -34,7 +34,6 @@ public class MessageServiceImpl implements MessageService {
 
     // ── Helpers ──────────────────────────────────────────────
 
-    /** Lấy user đang login từ SecurityContext */
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -43,7 +42,6 @@ public class MessageServiceImpl implements MessageService {
                 .orElseThrow(() -> new ResourceNotFoundException("User không tồn tại"));
     }
 
-    /** Kiểm tra user có trong room không, ném 403 nếu không */
     private RoomMember requireMembership(Long roomId, Long userId) {
         return roomMemberRepository.findByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new RuntimeException("Bạn không phải thành viên của room này"));
@@ -53,46 +51,58 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageResponse sendMessage(Long roomId, SendMessageRequest req, String senderUsername) {
+
         User sender = userRepository.findUserByUsername(senderUsername)
-                .orElseThrow(() -> new ResourceNotFoundException("User: " + senderUsername));
+                .orElseThrow(() -> new ResourceNotFoundException("User không tồn tại: " + senderUsername));
+
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResourceNotFoundException("Room: " + roomId));
+                .orElseThrow(() -> new ResourceNotFoundException("Room không tồn tại: " + roomId));
+
         requireMembership(roomId, sender.getId());
+
+        Message replyTo = null;
+        if (req.getReplyToId() != null) {
+            replyTo = messageRepository.findById(req.getReplyToId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Tin nhắn reply không tồn tại"));
+            if (!replyTo.getRoom().getId().equals(roomId)) {
+                throw new RuntimeException("Tin nhắn reply không thuộc room này");
+            }
+        }
 
         MessageType type;
         try {
-            type = MessageType.valueOf(req.getType() != null ? req.getType().toUpperCase() : "TEXT");
+            type = MessageType.valueOf(
+                    req.getType() != null ? req.getType().toUpperCase() : "TEXT"
+            );
         } catch (IllegalArgumentException e) {
             type = MessageType.TEXT;
         }
 
-        // 🔥 JOIN / LEAVE: KHÔNG lưu DB, KHÔNG broadcast
-        if (type == MessageType.JOIN || type == MessageType.LEAVE) {
-            log.debug("Ignored {} for room {} from {}", type, roomId, sender.getUsername());
-            return null; // hoặc throw exception nếu muốn
-        }
-
-        // TEXT: lưu DB và broadcast bình thường
         Message message = Message.builder()
                 .sender(sender)
                 .room(room)
+                .replyTo(replyTo)
                 .content(req.getContent())
                 .type(type)
                 .attachmentUrl(req.getAttachmentUrl())
                 .build();
+
         message = messageRepository.save(message);
+
+        // Broadcast tin nhắn mới
         MessageResponse response = messageMapper.toResponse(message);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, response);
+
+        log.debug("Message gửi: id={}, room={}, sender={}", message.getId(), roomId, senderUsername);
         return response;
     }
+
     // ── Read ──────────────────────────────────────────────────
 
     @Override
     @Transactional(readOnly = true)
     public MessagePageResponse getMessages(Long roomId, int page, int size) {
         User current = getCurrentUser();
-
-        // Phải là thành viên mới được đọc lịch sử
         requireMembership(roomId, current.getId());
 
         Pageable pageable = PageRequest.of(page, size);
@@ -119,22 +129,30 @@ public class MessageServiceImpl implements MessageService {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tin nhắn không tồn tại: " + messageId));
 
-        // Chỉ người gửi hoặc ADMIN hệ thống được xóa
-        boolean isSender  = message.getSender().getId().equals(current.getId());
+        // ✅ Kiểm tra user có trong room
+        requireMembership(message.getRoom().getId(), current.getId());
+
+        // Chỉ người gửi hoặc ADMIN được xóa
+        boolean isSender   = message.getSender().getId().equals(current.getId());
         boolean isSysAdmin = current.getRole() == UserRole.ADMIN;
 
         if (!isSender && !isSysAdmin) {
             throw new RuntimeException("Bạn không có quyền xóa tin nhắn này");
         }
 
+        // Soft delete
         message.softDelete();
         messageRepository.save(message);
 
-        // Broadcast để client cập nhật UI (ẩn nội dung, hiện "Tin nhắn đã bị xóa")
+        // ✅ Broadcast trạng thái đã xóa — cùng format MessageResponse
+        // Frontend sẽ tìm message theo ID và UPDATE (thay vì thêm mới)
         MessageResponse deletedResponse = messageMapper.toResponse(message);
-        messagingTemplate.convertAndSend("/topic/room/" + message.getRoom().getId(), deletedResponse);
+        messagingTemplate.convertAndSend(
+                "/topic/room/" + message.getRoom().getId(),
+                deletedResponse
+        );
 
-        log.info("Message {} bị xóa bởi {}", messageId, current.getUsername());
+        log.info("Message {} đã bị xóa bởi user {}", messageId, current.getUsername());
     }
 
     // ── Edit ──────────────────────────────────────────────────
@@ -144,20 +162,25 @@ public class MessageServiceImpl implements MessageService {
         User current = getCurrentUser();
 
         Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new ResourceNotFoundException("Tin nhắn không tồn tại: " + messageId));
+                .orElseThrow(() -> new ResourceNotFoundException("Tin nhắn không tồn tại"));
 
-        // Chỉ người gửi được sửa — ADMIN không có quyền sửa nội dung người khác
+        // ✅ Kiểm tra user có trong room
+        requireMembership(message.getRoom().getId(), current.getId());
+
+        // Chỉ người gửi được sửa
         if (!message.getSender().getId().equals(current.getId())) {
             throw new RuntimeException("Bạn không có quyền sửa tin nhắn này");
         }
 
-        // Entity tự guard: ném exception nếu tin đã bị xóa
         message.edit(req.getContent());
         message = messageRepository.save(message);
 
-        // Broadcast nội dung mới
+        // Broadcast nội dung mới — cùng format MessageResponse
         MessageResponse updatedResponse = messageMapper.toResponse(message);
-        messagingTemplate.convertAndSend("/topic/room/" + message.getRoom().getId(), updatedResponse);
+        messagingTemplate.convertAndSend(
+                "/topic/room/" + message.getRoom().getId(),
+                updatedResponse
+        );
 
         log.debug("Message {} được sửa bởi {}", messageId, current.getUsername());
         return updatedResponse;
@@ -174,8 +197,6 @@ public class MessageServiceImpl implements MessageService {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tin nhắn không tồn tại"));
 
-        // Chỉ cập nhật nếu messageId này MỚI HƠN lastReadMessage hiện tại
-        // Tránh trường hợp user click tin cũ làm reset unread count
         if (member.getLastReadMessage() == null
                 || messageId > member.getLastReadMessage().getId()) {
             member.setLastReadMessage(message);

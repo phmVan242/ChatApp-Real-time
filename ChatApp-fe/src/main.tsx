@@ -3,20 +3,21 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import "swiper/swiper-bundle.css";
 import "flatpickr/dist/flatpickr.css";
+
+// ✅ Fix sockjs-client: polyfill `global` cho browser
+(window as any).global = window;
+
 import App from "./App.tsx";
 import { AppWrapper } from "./components/common/PageMeta.tsx";
 import { ThemeProvider } from "./context/ThemeContext.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx"; 
-import { RoomListProvider } from "./context/RoomListContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
       <AppWrapper>
         <AuthProvider>   
-          <RoomListProvider>
-            <App />
-          </RoomListProvider>
+          <App />
         </AuthProvider>
       </AppWrapper>
     </ThemeProvider>
