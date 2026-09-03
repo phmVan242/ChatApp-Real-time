@@ -38,12 +38,8 @@ public class MessageController {
      * → tất cả client đang subscribe nhận được.
      */
     @MessageMapping("/chat.send/{roomId}")
-    public void sendMessage(
-            @DestinationVariable Long roomId,
-            @Payload SendMessageRequest req,
-            Principal principal) {
-
-        log.debug("WS send: {} → room {}", principal.getName(), roomId);
+    public void sendMessage(@DestinationVariable Long roomId, @Payload SendMessageRequest req, Principal principal) {
+        log.info("WS send from {} to room {}: {}", principal.getName(), roomId, req.getContent());
         messageService.sendMessage(roomId, req, principal.getName());
     }
 

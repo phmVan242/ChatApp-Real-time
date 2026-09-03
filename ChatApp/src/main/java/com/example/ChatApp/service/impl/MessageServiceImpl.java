@@ -53,60 +53,38 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageResponse sendMessage(Long roomId, SendMessageRequest req, String senderUsername) {
-
-        // 1. Load sender — username đến từ JWT (đáng tin cậy)
         User sender = userRepository.findUserByUsername(senderUsername)
-                .orElseThrow(() -> new ResourceNotFoundException("User không tồn tại: " + senderUsername));
-
-        // 2. Load room
+                .orElseThrow(() -> new ResourceNotFoundException("User: " + senderUsername));
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResourceNotFoundException("Room không tồn tại: " + roomId));
-
-        // 3. Phải là thành viên mới được gửi
+                .orElseThrow(() -> new ResourceNotFoundException("Room: " + roomId));
         requireMembership(roomId, sender.getId());
 
-        // 4. Xử lý replyTo (nếu có)
-        Message replyTo = null;
-        if (req.getReplyToId() != null) {
-            replyTo = messageRepository.findById(req.getReplyToId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Tin nhắn reply không tồn tại"));
-
-            // reply phải thuộc cùng room
-            if (!replyTo.getRoom().getId().equals(roomId)) {
-                throw new RuntimeException("Tin nhắn reply không thuộc room này");
-            }
-        }
-
-        // 5. Parse type — default TEXT nếu không hợp lệ
         MessageType type;
         try {
-            type = MessageType.valueOf(
-                    req.getType() != null ? req.getType().toUpperCase() : "TEXT"
-            );
+            type = MessageType.valueOf(req.getType() != null ? req.getType().toUpperCase() : "TEXT");
         } catch (IllegalArgumentException e) {
             type = MessageType.TEXT;
         }
 
-        // 6. Tạo và lưu
+        // 🔥 JOIN / LEAVE: KHÔNG lưu DB, KHÔNG broadcast
+        if (type == MessageType.JOIN || type == MessageType.LEAVE) {
+            log.debug("Ignored {} for room {} from {}", type, roomId, sender.getUsername());
+            return null; // hoặc throw exception nếu muốn
+        }
+
+        // TEXT: lưu DB và broadcast bình thường
         Message message = Message.builder()
                 .sender(sender)
                 .room(room)
-                .replyTo(replyTo)
                 .content(req.getContent())
                 .type(type)
                 .attachmentUrl(req.getAttachmentUrl())
                 .build();
-
         message = messageRepository.save(message);
-
-        // 7. Broadcast đến tất cả client đang subscribe room
         MessageResponse response = messageMapper.toResponse(message);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, response);
-
-        log.debug("Message gửi: id={}, room={}, sender={}", message.getId(), roomId, senderUsername);
         return response;
     }
-
     // ── Read ──────────────────────────────────────────────────
 
     @Override
