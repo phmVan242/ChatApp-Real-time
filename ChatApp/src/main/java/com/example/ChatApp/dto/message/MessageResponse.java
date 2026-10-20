@@ -2,6 +2,7 @@ package com.example.ChatApp.dto.message;
 
 import com.example.ChatApp.dto.user.UserResponse;
 import com.example.ChatApp.entity.enums.MessageType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class MessageResponse {
     private String        content;         // null nếu isDeleted = true
     private MessageType   type;
     private String        attachmentUrl;   // null nếu isDeleted = true
+    @JsonProperty("isDeleted")
     private boolean       isDeleted;
     private Long          replyToId;
     private String        replyToContent;  // null nếu replyTo đã bị xóa

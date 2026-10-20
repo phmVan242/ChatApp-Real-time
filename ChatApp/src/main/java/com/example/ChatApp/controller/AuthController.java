@@ -5,13 +5,12 @@ import com.example.ChatApp.dto.user.RegisterRequest;
 import com.example.ChatApp.dto.user.UserResponse;
 import com.example.ChatApp.entity.User;
 import com.example.ChatApp.repository.UserRepository;
+import com.example.ChatApp.security.JwtUtils;
 import com.example.ChatApp.service.AuthService;
-import com.example.ChatApp.util.JwtUtil;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +25,8 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserRepository userRepository;
-
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JwtUtils jwtUtils;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<?> signupUser(@RequestBody RegisterRequest registerRequest){
@@ -50,7 +49,7 @@ public class AuthController {
             if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
                 throw new RuntimeException("Invalid username or password");
             }
-            String token = JwtUtil.generateToken(loginRequest.getUsername(), user.getRole().toString(), user.getId());
+            String token = jwtUtils.generateToken(user.getId(), user.getUsername());
 
             return ResponseEntity.ok(
                     Map.of(
