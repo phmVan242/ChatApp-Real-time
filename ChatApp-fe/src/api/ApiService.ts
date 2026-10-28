@@ -1,7 +1,18 @@
 import axios from "axios";
 
+/**
+ * Mặc định gọi cùng origin (""), để dev server proxy /api → backend.
+ * Nhờ vậy app chạy được trên localhost, IP LAN, domain preview hay ngrok
+ * mà không cần sửa code và không vướng CORS.
+ *
+ * Chỉ set VITE_API_BASE_URL khi muốn trình duyệt gọi thẳng backend
+ * (khi đó backend phải cho phép origin của FE trong CORS_ALLOWED_ORIGINS).
+ */
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+
 const axiosClient = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: API_BASE_URL,
+  timeout: 20000,
 });
 
 axiosClient.interceptors.request.use((config) => {
@@ -89,7 +100,8 @@ export interface PageResponse<T> {
 
 // ========== API Service ==========
 export default class ApiService {
-  static BASE_URL = "http://localhost:8080";
+  /** Base URL đang dùng ("" = qua proxy cùng origin) */
+  static BASE_URL = API_BASE_URL;
 
   static async login(data: LoginRequest): Promise<LoginResponse> {
     const response = await axiosClient.post<LoginResponse>("/api/auth/login", data);
