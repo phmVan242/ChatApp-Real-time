@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Env mẫu được commit, .env* thật thì không
+.env.local
+!.env.example

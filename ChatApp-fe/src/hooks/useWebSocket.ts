@@ -2,6 +2,13 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
+/**
+ * Endpoint SockJS của backend.
+ * Mặc định "/ws" → URL tương đối, tự trỏ về origin đang mở trang và đi qua
+ * proxy của dev server. Không hardcode localhost để chạy được sau reverse proxy.
+ */
+const WS_PATH = import.meta.env.VITE_WS_URL || "/ws";
+
 export function useWebSocket(token: string | null) {
   const clientRef = useRef<Client | null>(null);
   const [connected, setConnected] = useState(false);
@@ -11,7 +18,7 @@ export function useWebSocket(token: string | null) {
     if (clientRef.current?.connected) return;
 
     const client = new Client({
-      webSocketFactory: () => new SockJS("http://localhost:8080/ws") as any,
+      webSocketFactory: () => new SockJS(WS_PATH) as any,
       connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
       reconnectDelay: 3000,
       heartbeatIncoming: 4000,

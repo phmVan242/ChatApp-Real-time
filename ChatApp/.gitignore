@@ -36,3 +36,6 @@ build/
 .env
 .env.*
 
+
+# Env mẫu được commit, .env thật thì không
+!.env.example
